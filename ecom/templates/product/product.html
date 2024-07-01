@@ -1,0 +1,164 @@
+{% extends 'base/base.html' %}
+
+{% block start %}
+<section class="section-content padding-y bg">
+    <div class="container">
+    
+    <!-- ============================ COMPONENT 1 ================================= -->
+    <div class="card">
+        <div class="row no-gutters">
+            <aside class="col-md-6">
+                <article class="gallery-wrap"> 
+                    <div class="img-big-wrap">
+                        <div> <a href="#"><img src="/media/{{ product.product_images.first.image }}"></a></div>
+                    </div>
+                    <div class="thumbs-wrap">
+                        {% for image in product.product_images.all %}
+                            <a href="#" class="item-thumb"> <img src="/media/{{ image.image }}"></a>
+                        {% endfor %}
+                    </div>
+                </article>
+            </aside>
+            <main class="col-md-6 border-left">
+                <article class="content-body">
+                    <h2 class="title">{{ product.product_name }}</h2>
+                    <div class="rating-wrap my-3">
+                        <ul class="rating-stars">
+                            <li style="width:80%" class="stars-active"> 
+                                <i class="fa fa-star"></i> <i class="fa fa-star"></i> 
+                                <i class="fa fa-star"></i> <i class="fa fa-star"></i> 
+                                <i class="fa fa-star"></i> 
+                            </li>
+                            <li>
+                                <i class="fa fa-star"></i> <i class="fa fa-star"></i> 
+                                <i class="fa fa-star"></i> <i class="fa fa-star"></i> 
+                                <i class="fa fa-star"></i> 
+                            </li>
+                        </ul>
+                        <small class="label-rating text-muted">132 reviews</small>
+                        <small class="label-rating text-success"> <i class="fa fa-clipboard-check"></i> 154 orders </small>
+                    </div>
+                    <div class="mb-3"> 
+                        {% if updated_price %}
+                            <h4> <b> $ {{ updated_price }}.00</b></h4>
+                        {% else %}
+                            <h4><b> $ {{ product.price }}.00</b></h4>
+                        {% endif %}
+                    </div>
+                    <p>{{ product.product_description }}</p>
+                    <hr>
+                    <div class="form-row">
+                        {% if product.size_variant.count %}
+                            <div class="form-group col-md ">
+                                <label>Select size</label>
+                                <div class="mt-1">
+                                    {% for size in product.size_variant.all %}
+                                        <label class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio"  class="mr-2"onchange="get_correct_price()" name="select_size" value="{{ size.size_name }}" {% if selected_size == size.size_name %}checked{% endif %}>
+                                            <div class="">{{ size.size_name }}</div>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if product.color_variant.count %}
+                        <div class="form-row">
+                            <div class="form-group col-md" >
+                                <label>Select color</label>
+                                <div class="mt-1">
+                                    {% for color in product.color_variant.all %}
+                                        <label class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" class="mr-2" onchange="get_correct_price()" name="select_color" value="{{ color.color_name }}" {% if selected_color == color.color_name %}checked{% endif %}>
+                                            <div class="">{{ color.color_name }}</div>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if selected_size and selected_color %}
+                        <a href="#" class="btn btn-primary" onclick="validateSelection()"> Buy now </a>
+                        <a href="{% url 'add_to_cart' product.uid %}?size={{ selected_size }}&color={{ selected_color }}" class="btn btn-outline-primary">Add to Cart</a>
+                    {% else %}
+                        <div class="alert alert-primary" role="alert">
+                            Select the size and color first
+                        </div>
+                        <a href="#" class="btn btn-primary" onclick="validateSelection()"> Buy now </a>
+                        <button class="btn btn-outline-primary"> Add to Cart</button>
+                    {% endif %}
+                </article>
+            </main>
+        </div>
+    </div>
+    <!-- ============================ COMPONENT 1 END .// ================================= -->
+
+    <!-- Ratings Section -->
+    <div class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <h2>Ratings</h2>
+                {% for rating in ratings %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="media">
+                            <img src="/media/{{ rating.user.profile.profile_image }}" class="icon icon-sm border mr-3 rounded-circle" alt="Profile Picture" style="width: 50px;">
+                            <div class="media-body">
+                                <h5 class="mt-0 flex-wrap"><strong>{{ rating.user.username }}</strong></h5>
+                                <p>Rating: {{ rating.rating }} ⭐️</p>
+                                   
+                                <p>Reviews:{{ rating.review }}</p>
+                                <p><small class="text-muted">Submitted on: {{ rating.created_at }}</small></p>
+                                {% include 'base/alert.html'%}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No ratings yet.</p>
+                {% endfor %}
+            </div>
+            <div class="col-lg-8">
+                <h2>Submit Your Rating</h2>
+                {% if user.is_authenticated %}
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" action="{% url 'add_rating' product.slug %}">
+                            {% csrf_token %}
+                            {{ rating_form.as_p }}
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card">
+                    <div class="card-body">
+                        <p>You must be <a href="{% url 'login' %}">logged in</a> to submit a rating.</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    
+</section>
+
+<script>
+    function get_correct_price() {
+        var size = document.querySelector('input[name="select_size"]:checked').value;
+        var color = document.querySelector('input[name="select_color"]:checked').value;
+        if (size && color) {
+            window.location.href = window.location.pathname + '?size=' + size + '&color=' + color;
+        }
+    }
+    function validateSelection() {
+        var size = document.querySelector('input[name="select_size"]:checked');
+        var color = document.querySelector('input[name="select_color"]:checked');
+        if(!size || !color){
+            alert('Please select a size and color.');
+            return;
+        }
+    }
+</script>
+{% endblock %}

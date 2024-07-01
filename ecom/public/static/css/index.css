@@ -1,0 +1,53 @@
+.custom-caption {
+    position: absolute;
+    left: 210px;
+    bottom: 50px;
+    text-align: center;
+    color: rgb(255, 255, 255);
+    padding: 0px;
+}
+
+.custom-caption h5 {
+    font-size: 4.5em;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+     /* Example handwriting font */
+     
+}
+
+.custom-caption p {
+    font-size: 3.5em;
+    font-family:cursive /* Example handwriting font */
+}
+
+@media (max-width: 768px) {
+    .custom-caption {
+        bottom: 20px;
+        left: 0;
+    }
+    
+    .custom-caption h5 {
+        font-size: 2.5em;
+    }
+    
+    .custom-caption p {
+        font-size: 1.5em;
+    }
+}
+
+@media (max-width: 576px) {
+    .custom-caption {
+        bottom: 10px;
+    }
+    
+    .custom-caption h5 {
+        font-size: 2em;
+    }
+    
+    .custom-caption p {
+        font-size: 1em;
+    }
+}
+
+.carousel-item img{
+    opacity: 0.8;
+}

@@ -1,0 +1,54 @@
+{% extends 'base/base.html' %}
+
+{% block start %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Filter Products by Category</h1>
+    
+    <form method="GET" action="" class="mb-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group form-inline d-inline-flex mr-auto">
+                    
+                    <label for="category" class="form-label">Select Category:</label>
+                    <select name="category" id="category" class=" ml-2 form-control" onchange="this.form.submit()">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.slug }}" {% if category.slug == selected_category %}selected{% endif %}>
+                                {{ category.category_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                
+                </div>
+            </div>
+        </div>
+</div>
+
+
+<div class="container mt-5 pt-5 ">
+    <h2> Searched Products</h2>
+   
+        
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-3">
+                <figure class="card card-product-grid">
+                    <div class="img-wrap"> <img src="/media/{{ product.product_images.first.image }}"> </div>
+                    <figcaption class="info-wrap border-top text-center">
+                        <a href="{% url 'get_product' product.slug %}" class="title"><b>{{ product.product_name|truncatewords:4 }}</b></a>
+                        <div class="price mt-2 text-center">${{ product.price }}</div> 
+                        <div class="text-center">
+                            <a href="{% url 'get_product' product.slug %}" class="btn btn-primary">Details</a>
+                        </div>
+                    </figcaption>
+                </figure> 
+            </div> 
+            {% endfor %}
+        </div> 
+    
+
+
+</div>
+
+
+{% endblock %}

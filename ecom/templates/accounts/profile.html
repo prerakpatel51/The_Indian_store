@@ -1,0 +1,58 @@
+{% extends 'base/base.html' %}
+
+{% block start %}
+<div class="container mt-5">
+    <h2 class="mb-4 ml-4 pl-4">Profile</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-3 text-center">
+                {% if user.profile.profile_image %}
+                    <img src="{{ user.profile.profile_image.url }}" class="img-profile border rounded-circle mb-3" alt="Profile Image" style="width: 150px; height: 150px;">
+                {% else %}
+                    <a href="#" class="icon icon-sm rounded-circle border"><i class="fa fa-user"></i></a>
+                {% endif %}
+                <div class="form-group">
+                    {{ form.profile_image }}
+                    
+                    <button type="button" class="btn btn-secondary mt-2" onclick="document.getElementById('id_profile_image').click();">Upload Profile Image</button>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="form-group">
+                    <label for="id_address_line_1">Address Line 1</label>
+                    {{ form.address_line_1 }}
+                </div>
+                <div class="form-group">
+                    <label for="id_address_line_2">Address Line 2</label>
+                    {{ form.address_line_2 }}
+                </div>
+                <div class="form-group">
+                    <label for="id_city">City</label>
+                    {{ form.city }}
+                </div>
+                <div class="form-group">
+                    <label for="id_state">State</label>
+                    {{ form.state }}
+                </div>
+                <div class="form-group">
+                    <label for="id_country">Country</label>
+                    {{ form.country }}
+                </div>
+                <div class="form-group">
+                    <label for="id_zip_code">Zip Code</label>
+                    {{ form.zip_code }}
+                </div>
+                <a href="{% url 'index' %}" class="btn btn-primary">Go Back</a>
+                <button type="submit" class="btn btn-primary">Save</button>
+                
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    document.getElementById('id_profile_image').onchange = function() {
+        document.getElementById('id_profile_image').form.submit();
+    };
+</script>
+{% endblock %}

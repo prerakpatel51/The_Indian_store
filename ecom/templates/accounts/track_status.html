@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+
+{% block start %}
+<div class="container mt-4">
+    <h2>Track Your Order</h2>
+    <div class="row">
+        {% for item in purchased_items %}
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <!-- <div class="col-md-4 d-flex justify-content-center align-items-center">
+                        <img src="{{ item.product.product_images.first.image.url }}" class="img-sm img-responsive"  alt="Product Image">
+                    </div> -->
+                    <figure class="itemside col-md-4 d-flex justify-content-center align-items-center ">
+                        <img
+                                src="{{ item.product.product_images.first.image.url }}"
+                                class="img-sm mt-4">
+                       
+                    </figure>
+                    <div class="col-md-8">
+                        <div class="card-body text-left">
+                            <h5 class="card-title">{{ item.product.product_name }}</h5>
+                            <p class="card-text">Status: <strong>{{ item.get_status_display }}</strong></p>
+                            <p class="card-text">Price: ${{ item.get_product_price }}</p>
+                            <p class="card-text">Color: {{ item.color_variant.color_name }}</p>
+                            <p class="card-text">Size: {{ item.size_variant.size_name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

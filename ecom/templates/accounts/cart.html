@@ -1,0 +1,234 @@
+{% extends 'base/base.html'%}
+
+{% block start %}
+
+<script src="https://js.stripe.com/v3/"></script>
+
+<section class="section-content padding-y ">
+    <div class="container">
+
+        <div class="row">
+            <main class="col-md-9">
+                <div class="card">
+                    {% if cart.cart_items.all %}
+                    <table class="table table-borderless table-shopping-cart">
+                        <thead class="text-muted">
+                            <tr class="small text-uppercase">
+                                <th scope="col">Product</th>
+                                <th scope="col" width="120">Size</th>
+                                <th scope="col" width="180">Color option</th>
+
+                                <th scope="col" width="120">Price</th>
+                                <th scope="col" class="text-right" width="200"> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                            {% for cart_item in cart.cart_items.all %}
+                            <tr>
+                                <td>
+                                    <figure class="itemside">
+                                        <div class="aside"><img
+                                                src="{{ cart_item.product.product_images.first.image.url }}"
+                                                class="img-sm"></div>
+                                        <figcaption class="info">
+                                            <a href="#" class="title text-dark">{{ cart_item.product.product_name }}</a>
+
+                                            <p class="text-muted small">Price: ${{ cart_item.get_product_price }}</p>
+                                        </figcaption>
+                                    </figure>
+                                </td>
+                                <td>
+                                    <span><a href="#" class="title text-dark">{{ cart_item.size_variant }}</a></span>
+                                </td>
+                                <td>
+                                    <span><a href="#" class="title text-dark">{{ cart_item.color_variant }}</a></span>
+                                </td>
+
+                                <td>
+                                    <div class="price-wrap">
+                                        <var class="price">${{ cart_item.get_product_price }}</var>
+                                    </div>
+                                </td>
+                                <td class="title text-dark">
+                                    <a href="{% url 'remove_cart' cart_item.uid %}" class="btn btn-light">Remove</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+
+                            <video src="/media/video/empty_cart.mp4" class="container w-50"></video>
+                            <h1 class="container text-center">Empty cart !!</h1>
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                    {% if cart.cart_items.all %}
+                    <div class="card-body border-top">
+                        
+                         
+                                
+                                
+                        <a href="{% url 'index' %}" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continue shopping </a>
+                        <button type="button" class="btn btn-primary float-md-right" id="checkout-button">Checkout</button>
+                    </div>
+                    <div class="alert alert-success mt-3">
+                        <p class="icontext"><i class="icon text-success fa fa-truck"></i> Free Delivery within 1-2 weeks
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card-body border-top">
+                    <a href="{% url 'index' %}" class="btn btn-primary float-md-right"> Nothing to Purchase Go back? <i
+                            class="fa fa-chevron-right"></i> </a>
+                    <a href="{% url 'index' %}" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continue shopping </a>
+                </div>
+
+                {% endif %}
+            </main>
+            <aside class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <form method="post">
+                            {% include 'base/alert.html'%}
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label>Have coupon?</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="coupon" placeholder="Coupon code">
+                                    <span class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">Apply</button>
+                                    </span>
+                                </div>
+                            </div>
+                            {% if cart.coupon %}
+                            {% if cart.cart_items.all %}
+                            <a href="{% url 'remove_coupon' cart.uid %}" class="btn btn-success">{{cart.coupon.coupon_code}}</a>
+                            {% endif %}
+                            {% endif %}
+                        </form>
+
+                    </div>
+                    <!-- card-body.// -->
+                    <div class="container mt-5">
+                        <div class="form-group">
+                            <label for="copyField">Coupons to apply</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="copyField1" value="FIRSTBUY" readonly>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-primary" type="button" id="copyButton1">Copy</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- card .// -->
+                <div class="card">
+                    {% if cart.cart_items.all %}
+                    <div class="card-body">
+                        <dl class="dlist-align">
+                            <b><dt>Total price:</dt></b>
+                           <h4> <dd class="text-right">$ {{ cart.get_cart_total }} </dd></h4>
+                        </dl>
+                        <hr>
+                        {% if cart.coupon %}
+                        <dl class="dlist-align">
+                            <h5><dt>hurray you saved  ${{cart.coupon.discount_price}} on your Purchase</dt></h5>
+                            
+                        </dl>
+                        {% endif %}
+                    {% else %}
+                    <p>Buy something</p>
+                    {% endif %}    
+                        <hr>
+                        <p class="text-center mb-3">
+                            <img src="/media/images/misc/payments.png" height="26">
+                        </p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="form-group">
+            <label for="copyField">Card details for testing(any future date and cvv will work)</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="copyField" value="4242424242424242" readonly>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="button" id="copyButton">Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        document.getElementById('copyButton').addEventListener('click', function() {
+            const copyText = document.getElementById('copyField');
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /* For mobile devices */
+            document.execCommand('copy');
+            alert('Copied the text: ' + copyText.value);
+        });
+    </script>
+    <script>
+        document.getElementById('copyButton1').addEventListener('click', function() {
+            const copyText = document.getElementById('copyField1');
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /* For mobile devices */
+            document.execCommand('copy');
+            alert('Copied the text: ' + copyText.value);
+        });
+    </script>
+    {% csrf_token %}
+</section>
+
+<script type="text/javascript">
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    // Create an instance of the Stripe object with your publishable API key
+    var stripe = Stripe("pk_test_51PUGUV2KHoy5iVMl8SRS3qMCE4Q05N4TJhxY6lyKt8UdBOUKiyHVuZ2nW3GlQVpsqcDv5GlsTqaEvnyChHAR2z7W001MoNfK6B");
+    var checkoutButton = document.getElementById("checkout-button");
+    
+    checkoutButton.addEventListener("click", function () {
+       
+      fetch("{% url 'create-checkout-session'%}", {
+        method: "POST",
+        headers: {
+            'X-CSRFToken': csrftoken
+        }
+        
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (session) {
+          return stripe.redirectToCheckout({ sessionId: session.id });
+        })
+        .then(function (result) {
+          // If redirectToCheckout fails due to a browser or network
+          // error, you should display the localized error message to your
+          // customer using error.message.
+          if (result.error) {
+            alert(result.error.message);
+          }
+        })
+        .catch(function (error) {
+          console.error("Error:", error);
+        });
+    });
+
+  </script> 
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+

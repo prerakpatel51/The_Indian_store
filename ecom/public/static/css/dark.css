@@ -1,0 +1,18 @@
+/* Add this to your main CSS file or a separate dark-theme.css */
+body.dark-theme {
+    background-color: #121212;
+    /* color: #ffffff; */
+}
+
+.navbar.dark-theme {
+    background-color: #1c1c1c;
+}
+
+section.dark-theme { 
+    background-color: black;
+
+} 
+
+div.dark-theme{
+    background-color: black;
+}

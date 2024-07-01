@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+
+{% block start %}
+<!-- <div class="container mt-5">
+    {% if products %}
+        <h1 class="mb-4">Search Results</h1>
+        
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="" class="card-img-top" alt="{{ product.product_name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.product_name }}</h5>
+                            <p class="card-text">{{ product.product_description|truncatewords:20 }}</p>
+                            <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="{% url 'get_product' product.slug %}" class="btn btn-primary">Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center">
+            <h1>No products found.</h1>
+            <p>Please try a different category.</p>
+        </div>
+    {% endif %}
+</div> -->
+
+
+
+
+
+<div class="container mt-5 pt-5">
+    <h2>Search Results</h2>
+    {% if products %}
+        
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-3">
+                <figure class="card card-product-grid">
+                    <div class="img-wrap"> <img src="/media/{{ product.product_images.first.image }}"> </div>
+                    <figcaption class="info-wrap border-top text-center">
+                        <a href="{% url 'get_product' product.slug %}" class="title"><b>{{ product.product_name|truncatewords:3 }}</b></a>
+                        <div class="price mt-2 text-center">${{ product.price }}</div> 
+                        <div class="text-center">
+                            <a href="{% url 'get_product' product.slug %}" class="btn btn-primary">Details</a>
+                        </div>
+                    </figcaption>
+                </figure> 
+            </div> 
+            {% endfor %}
+        </div> 
+
+    {% else %}
+        <div class="text-center">
+            <h1>No products found.</h1>
+            <p>Please try a different name.</p>
+        </div>
+    
+    {% endif %}
+    </div>
+{% endblock %}
